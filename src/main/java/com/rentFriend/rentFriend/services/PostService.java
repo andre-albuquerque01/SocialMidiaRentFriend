@@ -103,7 +103,9 @@ public class PostService {
 			_Post.setTitle(data.getTitle());
 			_Post.setDescription(data.getDescription());
 			_Post.setUpdate_at(now.toString());
-
+			
+			this.postRepository.save(_Post);
+			
 			return ResponseEntity.ok().body("Success");
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
