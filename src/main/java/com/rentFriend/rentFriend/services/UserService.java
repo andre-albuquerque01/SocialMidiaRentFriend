@@ -7,11 +7,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import com.rentFriend.rentFriend.dtos.AuthenticationDto;
+import com.rentFriend.rentFriend.dtos.LoginDto;
 import com.rentFriend.rentFriend.dtos.UserRecordDto;
+import com.rentFriend.rentFriend.infra.security.TokenService;
 import com.rentFriend.rentFriend.models.UserModel;
 import com.rentFriend.rentFriend.models.enums.UserRole;
 import com.rentFriend.rentFriend.repositories.UserRepository;
@@ -21,6 +25,22 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	TokenService tokenService;
+	
+	public ResponseEntity<Object> login(AuthenticationDto data) {
+		var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+		var auth = this.authenticationManager.authenticate(usernamePassword);
+		
+		var token = tokenService.generateToken((UserModel) auth.getPrincipal());
+		
+		return ResponseEntity.ok().body(new LoginDto(token));
+
+	}
 
 	public ResponseEntity<Object> saveUser(UserRecordDto data) {
 		try {

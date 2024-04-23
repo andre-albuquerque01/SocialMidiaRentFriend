@@ -13,6 +13,7 @@ import com.rentFriend.rentFriend.dtos.AuthenticationDto;
 import com.rentFriend.rentFriend.dtos.LoginDto;
 import com.rentFriend.rentFriend.infra.security.TokenService;
 import com.rentFriend.rentFriend.models.UserModel;
+import com.rentFriend.rentFriend.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -21,19 +22,10 @@ import jakarta.validation.Valid;
 public class AuthenticationController {
 	
 	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	TokenService tokenService;
-	
+	private UserService userService;
 	@PostMapping("/login")
-	public ResponseEntity login(@RequestBody @Valid AuthenticationDto data) {
-		var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-		var auth = this.authenticationManager.authenticate(usernamePassword);
-		
-		var token = tokenService.generateToken((UserModel) auth.getPrincipal());
-		
-		return ResponseEntity.ok(new LoginDto(token));
-
+	public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDto data) {
+		ResponseEntity<Object> response = this.userService.login(data);
+		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
 	}
 }
