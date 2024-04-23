@@ -34,7 +34,7 @@ public class CommentsService {
 
 	public ResponseEntity<Object> getComment(UUID id) {
 		try {
-			Optional<CommentsModel> _comments = this.commentsRepository.findAllById(id);
+			Optional<CommentsModel> _comments = this.commentsRepository.findByPostId(id);
 
 			if (_comments.isEmpty())
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found");
@@ -67,7 +67,7 @@ public class CommentsService {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
+
 	public ResponseEntity<Object> updateComments(UUID id, CommentsModel data) throws Exception {
 		try {
 			Optional<CommentsModel> _comments = this.commentsRepository.findById(id);
@@ -80,9 +80,9 @@ public class CommentsService {
 
 			_Comments.setComments(data.getComments());
 			_Comments.setUpdate_at(now.toString());
-			
+
 			this.commentsRepository.save(_Comments);
-			
+
 			return ResponseEntity.ok().body("Success");
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());

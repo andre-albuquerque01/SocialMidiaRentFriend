@@ -26,7 +26,7 @@ public class CommentsModel implements Serializable {
 	private UserModel user;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id", referencedColumnName = "idUser", unique = false)
+	@JoinColumn(name = "post_id", referencedColumnName = "idPost", unique = false)
 	private PostModel post;
 
 	private String comments;
