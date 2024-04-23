@@ -1,7 +1,6 @@
 package com.rentFriend.rentFriend.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rentFriend.rentFriend.dtos.PostDto;
 import com.rentFriend.rentFriend.models.PostModel;
 import com.rentFriend.rentFriend.repositories.PostRepository;
-import com.rentFriend.rentFriend.services.GetUserService;
 import com.rentFriend.rentFriend.services.PostService;
 
 import jakarta.validation.Valid;

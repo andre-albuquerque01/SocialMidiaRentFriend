@@ -1,7 +1,6 @@
 package com.rentFriend.rentFriend.models;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
