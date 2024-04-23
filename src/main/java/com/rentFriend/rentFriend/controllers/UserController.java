@@ -22,6 +22,7 @@ import com.rentFriend.rentFriend.dtos.UserRecordDto;
 import com.rentFriend.rentFriend.models.UserModel;
 import com.rentFriend.rentFriend.models.enums.UserRole;
 import com.rentFriend.rentFriend.repositories.UserRepository;
+import com.rentFriend.rentFriend.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -31,22 +32,13 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/register")
-	public ResponseEntity<UserModel> saveUser(@RequestBody @Valid UserRecordDto data) {
-		try {
-
-			if (this.userRepository.findByEmail(data.email()) != null)
-				return ResponseEntity.badRequest().build();
-			var role = UserRole.USER;
-			String encrypetPassword = new BCryptPasswordEncoder().encode(data.password());
-			var userModel = new UserModel(data.firstName(), data.lastName(), data.email(), encrypetPassword, role,
-					data.dateBirthday());
-			this.userRepository.save(userModel);
-			return ResponseEntity.ok().build();
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}
+	public ResponseEntity<Object> saveUser(@RequestBody @Valid UserRecordDto data) {
+		ResponseEntity<Object> response = this.userService.saveUser(data);
+		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
 	}
 
 	@GetMapping("/getAll")
@@ -56,33 +48,21 @@ public class UserController {
 
 	@GetMapping("/getOne/{id}")
 	public ResponseEntity<Object> getOneUser(@PathVariable(value = "id") UUID id) {
-		Optional<UserModel> _user = userRepository.findById(id);
-		if (_user.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found user");
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(_user.get());
+		ResponseEntity<Object> response = this.userService.getOneUser(id);
+		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
 	}
 
 	@PutMapping("/update/{id}")
 	public ResponseEntity<Object> updateUser(@PathVariable(value = "id") UUID id,
-			@RequestBody @Valid UserRecordDto datas) {
-		Optional<UserModel> _user = userRepository.findById(id);
-		if (_user.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-		}
-		var userModel = _user.get();
-		BeanUtils.copyProperties(datas, userModel);
-		return ResponseEntity.status(HttpStatus.OK).body(userRepository.save(userModel));
+			@RequestBody @Valid UserRecordDto data) {
+		ResponseEntity<Object> response = this.userService.updateUser(id, data);
+		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Object> deletUser(@PathVariable(value = "id") UUID id) {
-		Optional<UserModel> _user = userRepository.findById(id);
-		if (_user.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found user");
-		}
-		this.userRepository.delete(_user.get());
-		return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully.");
+		ResponseEntity<Object> response = this.userService.deletUser(id);
+		return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
 	}
 
 }
